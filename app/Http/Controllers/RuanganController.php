@@ -16,19 +16,27 @@ class RuanganController extends Controller
 
     public function store(Request $request)
     {
+        if (auth()->user()->role != 'admin') {
+            abort(403);
+        }
+
         $request->validate([
-    'nama_ruangan' => 'required',
-    'lantai' => 'required',
-    'keterangan' => 'nullable'
+            'nama_ruangan' => 'required',
+            'lantai' => 'required',
+            'keterangan' => 'nullable'
         ]);
 
         Ruangan::create($request->all());
 
-        return back()->with('success','Data berhasil ditambahkan');
+        return back()->with('success', 'Data berhasil ditambahkan');
     }
 
     public function update(Request $request, Ruangan $ruangan)
     {
+        if (auth()->user()->role != 'admin') {
+            abort(403);
+        }
+
         $request->validate([
             'nama_ruangan' => 'required',
             'lantai' => 'required',
@@ -37,13 +45,17 @@ class RuanganController extends Controller
 
         $ruangan->update($request->all());
 
-        return back()->with('success','Data berhasil diubah');
+        return back()->with('success', 'Data berhasil diubah');
     }
 
     public function destroy(Ruangan $ruangan)
     {
+        if (auth()->user()->role != 'admin') {
+            abort(403);
+        }
+
         $ruangan->delete();
 
-        return back()->with('success','Data berhasil dihapus');
+        return back()->with('success', 'Data berhasil dihapus');
     }
 }

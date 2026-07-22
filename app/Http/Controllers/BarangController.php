@@ -18,6 +18,10 @@ class BarangController extends Controller
 
     public function store(Request $request)
     {
+        if (auth()->user()->role != 'admin') {
+            abort(403);
+        }
+
         $request->validate([
             'nama_barang' => 'required',
             'ruangan_id' => 'required',
@@ -51,6 +55,10 @@ class BarangController extends Controller
 
     public function update(Request $request, Barang $barang)
     {
+        if (auth()->user()->role != 'admin') {
+            abort(403);
+        }
+
         $request->validate([
             'nama_barang' => 'required',
             'ruangan_id' => 'required',
@@ -72,6 +80,10 @@ class BarangController extends Controller
 
     public function destroy(Barang $barang)
     {
+        if (auth()->user()->role != 'admin') {
+            abort(403);
+        }
+
         $barang->delete();
 
         return back()->with('success', 'Data barang berhasil dihapus.');
