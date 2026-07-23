@@ -5,19 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\Pengembalian;
 use App\Models\Peminjaman;
 use App\Models\Barang;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 class PengembalianController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pengembalian = Pengembalian::with('peminjaman.barang')->latest()->get();
+        $query = Pengembalian::with('peminjaman');
 
+        // Search nama peminjam
+        if ($request->search) {
+            $query->whereHas('peminjaman', function ($q) use ($request) {
+                $q->where('nama_peminjam', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $pengembalian = $query->latest()->get();
+
+        // Untuk dropdown pada modal tambah
         $peminjaman = Peminjaman::where('status', 'Dipinjam')->get();
 
         return view('pengembalian.index', compact('pengembalian', 'peminjaman'));
     }
-
     public function store(Request $request)
     {
         if (auth()->user()->role != 'admin') {
@@ -34,6 +44,11 @@ class PengembalianController extends Controller
             'peminjaman_id' => $request->peminjaman_id,
             'tanggal_pengembalian' => $request->tanggal_pengembalian,
             'keterangan' => $request->keterangan,
+        ]);
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'aktivitas' => 'Menambahkan data pengembalian',
         ]);
 
         $pinjam = Peminjaman::find($request->peminjaman_id);
@@ -69,6 +84,11 @@ class PengembalianController extends Controller
             'keterangan' => $request->keterangan,
         ]);
 
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'aktivitas' => 'Mengubah data pengembalian',
+        ]);
+
         return back()->with('success', 'Data pengembalian berhasil diubah.');
     }
 
@@ -85,6 +105,11 @@ class PengembalianController extends Controller
 
         $barang->update([
             'jumlah' => $barang->jumlah - $peminjaman->jumlah
+        ]);
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'aktivitas' => 'Menghapus data pengembalian',
         ]);
 
         $pengembalian->delete();

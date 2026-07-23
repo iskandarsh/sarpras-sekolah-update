@@ -34,6 +34,37 @@
 
             @endif
 
+            <form method="GET" action="{{ route('pengembalian.index') }}" class="mb-5">
+
+                <div class="flex flex-col md:flex-row gap-3">
+
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Cari nama peminjam..."
+                        class="flex-1 border rounded-lg px-4 py-2">
+
+                    <div class="flex gap-2">
+
+                        <button
+                            type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg">
+                            Cari
+                        </button>
+
+                        <a
+                            href="{{ route('pengembalian.index') }}"
+                            class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg">
+                            Reset
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
             <div class="bg-white rounded-xl shadow-lg">
                 <div class="overflow-x-auto">
 
@@ -114,7 +145,7 @@
                                             Edit
                                         </button>
 
-                                        <form action="{{ route('ruangan.destroy', $item->id) }}" method="POST">
+                                        <form action="{{ route('pengembalian.destroy', $item->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
 

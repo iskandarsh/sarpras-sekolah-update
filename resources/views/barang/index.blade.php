@@ -24,6 +24,83 @@
             </div>
             @endif
 
+            <form method="GET" action="{{ route('barang.index') }}" class="mb-5">
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Cari nama / kode barang..."
+                        class="border rounded-lg px-4 py-2">
+
+                    <select
+                        name="ruangan_id"
+                        class="border rounded-lg px-4 py-2">
+
+                        <option value="">Semua Ruangan</option>
+
+                        @foreach($ruangan as $r)
+
+                        <option
+                            value="{{ $r->id }}"
+                            {{ request('ruangan_id') == $r->id ? 'selected' : '' }}>
+
+                            {{ $r->nama_ruangan }}
+
+                        </option>
+
+                        @endforeach
+
+                    </select>
+
+                    <select
+                        name="kondisi"
+                        class="border rounded-lg px-4 py-2">
+
+                        <option value="">Semua Kondisi</option>
+
+                        <option value="Baik"
+                            {{ request('kondisi') == 'Baik' ? 'selected' : '' }}>
+                            Baik
+                        </option>
+
+                        <option value="Rusak Ringan"
+                            {{ request('kondisi') == 'Rusak Ringan' ? 'selected' : '' }}>
+                            Rusak Ringan
+                        </option>
+
+                        <option value="Rusak Berat"
+                            {{ request('kondisi') == 'Rusak Berat' ? 'selected' : '' }}>
+                            Rusak Berat
+                        </option>
+
+                    </select>
+
+                    <div class="flex gap-2">
+
+                        <button
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-5 rounded-lg">
+
+                            Cari
+
+                        </button>
+
+                        <a
+                            href="{{ route('barang.index') }}"
+                            class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg">
+
+                            Reset
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
             <div class="bg-white rounded-xl shadow-lg">
                 <div class="overflow-x-auto">
 

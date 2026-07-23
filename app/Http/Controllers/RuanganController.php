@@ -3,13 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ruangan;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 class RuanganController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $ruangan = Ruangan::latest()->get();
+        $query = Ruangan::query();
+
+        // Search
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_ruangan', 'like', '%' . $request->search . '%')
+                    ->orWhere('lantai', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $ruangan = $query->latest()->get();
 
         return view('ruangan.index', compact('ruangan'));
     }
@@ -28,6 +39,11 @@ class RuanganController extends Controller
 
         Ruangan::create($request->all());
 
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'aktivitas' => 'Menambahkan ruangan "' . $request->nama_ruangan . '"',
+        ]);
+
         return back()->with('success', 'Data berhasil ditambahkan');
     }
 
@@ -45,6 +61,11 @@ class RuanganController extends Controller
 
         $ruangan->update($request->all());
 
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'aktivitas' => 'Mengubah ruangan "' . $ruangan->nama_ruangan . '"',
+        ]);
+
         return back()->with('success', 'Data berhasil diubah');
     }
 
@@ -55,6 +76,11 @@ class RuanganController extends Controller
         }
 
         $ruangan->delete();
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'aktivitas' => 'Menghapus ruangan "' . $ruangan->nama_ruangan . '"',
+        ]);
 
         return back()->with('success', 'Data berhasil dihapus');
     }
