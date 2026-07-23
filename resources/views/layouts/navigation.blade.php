@@ -39,6 +39,14 @@
                         {{ __('User') }}
                     </x-nav-link>
 
+                    @if(Auth::user()->role == 'admin')
+
+                    <x-nav-link :href="route('activity-log.index')" :active="request()->routeIs('activity-log.*')">
+                        Activity Log
+                    </x-nav-link>
+
+                    @endif
+
                 </div>
 
             </div>
@@ -58,7 +66,7 @@
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd"
                                         d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                        clip-rule="evenodd"/>
+                                        clip-rule="evenodd" />
                                 </svg>
                             </div>
 
@@ -106,7 +114,7 @@
                             stroke-linecap="round"
                             stroke-linejoin="round"
                             stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16"/>
+                            d="M4 6h16M4 12h16M4 18h16" />
 
                         <path
                             :class="{'hidden': !open, 'inline-flex': open}"
@@ -114,7 +122,7 @@
                             stroke-linecap="round"
                             stroke-linejoin="round"
                             stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12"/>
+                            d="M6 18L18 6M6 6l12 12" />
 
                     </svg>
 
@@ -153,6 +161,14 @@
             <x-responsive-nav-link :href="route('user.index')" :active="request()->routeIs('user.*')">
                 User
             </x-responsive-nav-link>
+
+            @if(Auth::user()->role == 'admin')
+
+            <x-responsive-nav-link :href="route('activity-log.index')" :active="request()->routeIs('activity-log.*')">
+                Activity Log
+            </x-responsive-nav-link>
+
+            @endif
 
         </div>
 
