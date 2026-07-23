@@ -15,7 +15,8 @@ class Barang extends Model
         'ruangan_id',
         'jumlah',
         'kondisi',
-        'keterangan'
+        'keterangan',
+        'foto',
     ];
 
     public function ruangan()

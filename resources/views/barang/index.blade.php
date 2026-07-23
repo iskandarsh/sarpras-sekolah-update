@@ -118,6 +118,10 @@
                                     Kode Barang
                                 </th>
 
+                                <th class="hidden md:table-cell px-3 md:px-6 py-3 text-center">
+                                    Foto
+                                </th>
+
                                 <th class="px-6 py-3 text-left">Nama Barang</th>
 
                                 <th class="px-6 py-3 text-left">Ruangan</th>
@@ -148,6 +152,18 @@
 
                                 <td class="hidden md:table-cell px-3 md:px-6 py-4">
                                     {{ $item->kode_barang }}
+                                </td>
+
+                                <td class="hidden md:table-cell px-3 md:px-6 py-4 text-center">
+
+                                    @if($item->foto)
+                                    <img
+                                        src="{{ asset('storage/' . $item->foto) }}"
+                                        class="w-16 h-16 object-cover rounded-lg mx-auto">
+                                    @else
+                                    <span class="text-gray-400">-</span>
+                                    @endif
+
                                 </td>
 
                                 <td class="px-6 py-4">
@@ -282,8 +298,8 @@
 
                 <form
                     action="{{ route('barang.store') }}"
-                    method="POST">
-
+                    method="POST"
+                    enctype="multipart/form-data">
                     @csrf
 
                     <div class="mb-4">
@@ -381,6 +397,20 @@
 
                     </div>
 
+                    <div class="mb-4">
+
+                        <label class="block mb-2 font-medium">
+                            Foto Barang
+                        </label>
+
+                        <input
+                            type="file"
+                            name="foto"
+                            accept="image/*"
+                            class="w-full border rounded-lg px-4 py-2">
+
+                    </div>
+
                     <div class="flex justify-end gap-3">
 
                         <button
@@ -436,7 +466,8 @@
 
                 <form
                     id="formEdit"
-                    method="POST">
+                    method="POST"
+                    enctype="multipart/form-data">
 
                     @csrf
                     @method('PUT')
@@ -525,6 +556,24 @@
                             name="keterangan"
                             rows="3"
                             class="w-full border rounded-lg px-4 py-2"></textarea>
+
+                        <div class="mb-4">
+
+                            <label class="block mb-2 font-medium">
+                                Ganti Foto Barang
+                            </label>
+
+                            <input
+                                type="file"
+                                name="foto"
+                                accept="image/*"
+                                class="w-full border rounded-lg px-4 py-2">
+
+                            <small class="text-gray-500">
+                                Kosongkan jika tidak ingin mengganti foto.
+                            </small>
+
+                        </div>
 
                     </div>
 

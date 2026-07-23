@@ -6,6 +6,7 @@ use App\Models\Barang;
 use App\Models\Ruangan;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BarangController extends Controller
 {
@@ -50,6 +51,7 @@ class BarangController extends Controller
             'jumlah' => 'required|integer',
             'kondisi' => 'required',
             'keterangan' => 'nullable',
+            'foto' => 'nullable|image|max:2048',
         ]);
 
         // Membuat kode barang otomatis
@@ -63,6 +65,12 @@ class BarangController extends Controller
 
         $kodeBarang = 'BRG' . str_pad($nomor, 3, '0', STR_PAD_LEFT);
 
+        $namaFoto = null;
+
+        if ($request->hasFile('foto')) {
+            $namaFoto = $request->file('foto')->store('barang', 'public');
+        }
+
         Barang::create([
             'kode_barang' => $kodeBarang,
             'nama_barang' => $request->nama_barang,
@@ -70,6 +78,7 @@ class BarangController extends Controller
             'jumlah' => $request->jumlah,
             'kondisi' => $request->kondisi,
             'keterangan' => $request->keterangan,
+            'foto' => $namaFoto,
         ]);
 
         ActivityLog::create([
@@ -92,7 +101,17 @@ class BarangController extends Controller
             'jumlah' => 'required|integer',
             'kondisi' => 'required',
             'keterangan' => 'nullable',
+            'foto' => 'nullable|image|max:2048',
         ]);
+
+        if ($request->hasFile('foto')) {
+
+            if ($barang->foto && Storage::exists('public/' . $barang->foto)) {
+                Storage::delete('public/' . $barang->foto);
+            }
+
+            $barang->foto = $request->file('foto')->store('barang', 'public');
+        }
 
         $barang->update([
             'nama_barang' => $request->nama_barang,
@@ -100,6 +119,7 @@ class BarangController extends Controller
             'jumlah' => $request->jumlah,
             'kondisi' => $request->kondisi,
             'keterangan' => $request->keterangan,
+            'foto' => $barang->foto,
         ]);
 
         ActivityLog::create([
@@ -120,6 +140,10 @@ class BarangController extends Controller
             'user_id' => auth()->id(),
             'aktivitas' => 'Menghapus barang "' . $barang->nama_barang . '"',
         ]);
+
+        if ($barang->foto && Storage::exists('public/' . $barang->foto)) {
+            Storage::delete('public/' . $barang->foto);
+        }
 
         $barang->delete();
 
