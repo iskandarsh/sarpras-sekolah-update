@@ -104,7 +104,7 @@
             <div class="bg-white rounded-xl shadow-lg">
                 <div class="overflow-x-auto">
 
-                    <table class="min-w-full">
+                    <table id="barangTable" class="min-w-full">
 
                         <thead class="bg-blue-600 text-white">
 
@@ -324,7 +324,7 @@
 
                         <select
                             name="ruangan_id"
-                            class="w-full border rounded-lg px-4 py-2"
+                            class="select2 w-full border rounded-lg px-4 py-2"
                             required>
 
                             <option value="">
@@ -362,12 +362,10 @@
                         <label class="block mb-2 font-medium">
                             Kondisi
                         </label>
-
                         <select
                             name="kondisi"
-                            class="w-full border rounded-lg px-4 py-2"
+                            class="select2 w-full border rounded-lg px-4 py-2"
                             required>
-
                             <option value="Baik">
                                 Baik
                             </option>
@@ -605,6 +603,12 @@
         </div>
 
         <script>
+            $(document).ready(function() {
+                $('.select2').select2({
+                    width: '100%'
+                });
+            });
+
             function openTambahModal() {
 
                 const modal = document.getElementById('modalTambah');

@@ -245,7 +245,7 @@
 
                     <select
                         name="role"
-                        class="w-full border rounded-lg px-4 py-2">
+                        class="select2 w-full border rounded-lg px-4 py-2">
 
                         <option value="admin">
                             Admin
@@ -410,6 +410,12 @@
         </div>
 
         <script>
+            $(document).ready(function() {
+                $('.select2').select2({
+                    width: '100%'
+                });
+            });
+
             function openTambahModal() {
 
                 document.getElementById('tambahModal')
