@@ -80,138 +80,18 @@
             <div class="bg-white rounded-xl shadow-lg">
                 <div class="overflow-x-auto">
 
-                    <table class="min-w-full">
+                    <div class="bg-white rounded-xl shadow-lg">
+                        <div class="overflow-x-auto">
 
-                        <thead class="bg-blue-600 text-white">
+                            <div id="peminjamanGrid"></div>
 
-                            <tr>
+                            <form id="deleteForm" method="POST" style="display:none;">
+                                @csrf
+                                @method('DELETE')
+                            </form>
 
-                                <th class="hidden md:table-cell px-3 md:px-6 py-3">
-                                    No
-                                </th>
-
-                                <th class="px-6 py-3 text-left">
-                                    Peminjam
-                                </th>
-
-                                <th class="px-6 py-3 text-left">
-                                    Barang
-                                </th>
-
-                                <th class="hidden md:table-cell px-3 md:px-6 py-3 text-center">
-                                    Jumlah
-                                </th>
-
-                                <th class="hidden md:table-cell px-3 md:px-6 py-3 text-center">
-                                    Tgl Pinjam
-                                </th>
-
-                                <th class="px-6 py-3 text-center">
-                                    Status
-                                </th>
-
-                                <th class="px-6 py-3 text-center">
-                                    Aksi
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            @forelse($peminjaman as $item)
-
-                            <tr class="border-b hover:bg-gray-50">
-
-                                <td class="hidden md:table-cell px-3 md:px-6 py-4">
-                                    {{ $loop->iteration }}
-                                </td>
-
-                                <td class="px-6 py-4">
-                                    {{ $item->nama_peminjam }}
-                                </td>
-
-                                <td class="px-6 py-4">
-                                    {{ $item->barang->nama_barang }}
-                                </td>
-
-                                <td class="hidden md:table-cell px-3 md:px-6 py-4 text-center">
-                                    {{ $item->jumlah }}
-                                </td>
-
-                                <td class="hidden md:table-cell px-3 md:px-6 py-4 text-center">
-                                    {{ $item->tanggal_pinjam }}
-                                </td>
-
-                                <td class="px-6 py-4 text-center">
-
-                                    @if($item->status == 'Dipinjam')
-
-                                    <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
-                                        Dipinjam
-                                    </span>
-
-                                    @else
-
-                                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">
-                                        Dikembalikan
-                                    </span>
-
-                                    @endif
-
-                                </td>
-
-                                <td class="px-6 py-4">
-
-                                    @if(Auth::user()->role == 'admin')
-
-                                    <div class="flex justify-center gap-2">
-
-                                        <button
-                                            onclick="openEditModal(
-        '{{ $item->id }}',
-        '{{ $item->nama_ruangan }}',
-        '{{ $item->lantai }}',
-        '{{ $item->keterangan }}'
-        )"
-                                            class="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded">
-                                            Edit
-                                        </button>
-
-                                        <form action="{{ route('peminjaman.destroy', $item->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-
-                                            <button
-                                                onclick="return confirm('Yakin ingin menghapus data ini?')"
-                                                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
-                                                Hapus
-                                            </button>
-                                        </form>
-
-                                    </div>
-
-                                    @endif
-                                </td>
-
-                            </tr>
-
-                            @empty
-
-                            <tr>
-
-                                <td colspan="7" class="text-center py-8 text-gray-500">
-                                    Belum ada data peminjaman.
-                                </td>
-
-                            </tr>
-
-                            @endforelse
-
-                        </tbody>
-
-                    </table>
+                        </div>
+                    </div>
 
                 </div>
 
@@ -507,6 +387,103 @@
         </div>
 
         <script>
+            $.get("/peminjaman/data", function(data) {
+
+                $("#peminjamanGrid").dxDataGrid({
+
+                    dataSource: data,
+
+                    keyExpr: "id",
+
+                    showBorders: true,
+                    showColumnLines: true,
+                    showRowLines: true,
+                    rowAlternationEnabled: true,
+                    columnAutoWidth: true,
+                    hoverStateEnabled: true,
+
+                    searchPanel: {
+                        visible: true,
+                        width: 250,
+                        placeholder: "Cari peminjaman..."
+                    },
+
+                    filterRow: {
+                        visible: true
+                    },
+
+                    headerFilter: {
+                        visible: true
+                    },
+
+                    sorting: {
+                        mode: "multiple"
+                    },
+
+                    paging: {
+                        pageSize: 10
+                    },
+
+                    pager: {
+                        showPageSizeSelector: true,
+                        allowedPageSizes: [5, 10, 20, 50],
+                        showInfo: true
+                    },
+
+                    export: {
+                        enabled: true,
+                        allowExportSelectedData: true,
+                        fileName: "Data Peminjaman"
+                    },
+
+                    columnChooser: {
+                        enabled: true
+                    },
+
+                    columns: [{
+                            caption: "No",
+                            width: 60,
+                            alignment: "center",
+                            cellTemplate: function(container, options) {
+                                container.text(options.rowIndex + 1);
+                            }
+                        },
+
+                        {
+                            dataField: "barang.nama_barang",
+                            caption: "Barang"
+                        },
+
+                        {
+                            dataField: "nama_peminjam",
+                            caption: "Peminjam"
+                        },
+
+                        {
+                            dataField: "jumlah",
+                            caption: "Jumlah",
+                            alignment: "center"
+                        },
+
+                        {
+                            dataField: "tanggal_pinjam",
+                            caption: "Tanggal Pinjam"
+                        },
+
+                        {
+                            dataField: "tanggal_kembali",
+                            caption: "Tanggal Kembali"
+                        },
+
+                        {
+                            dataField: "status",
+                            caption: "Status"
+                        }
+                    ]
+
+                });
+
+            });
             $(document).ready(function() {
                 $('.select2').select2({
                     width: '100%'

@@ -28,7 +28,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('ruangan', RuanganController::class);
 
+    Route::get('/barang/data', [BarangController::class, 'data'])
+        ->name('barang.data');
+
     Route::resource('barang', BarangController::class);
+
+    Route::get('/peminjaman/data', [PeminjamanController::class, 'data'])
+        ->name('peminjaman.data');
 
     Route::resource('peminjaman', PeminjamanController::class);
 

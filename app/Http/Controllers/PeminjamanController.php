@@ -115,4 +115,11 @@ class PeminjamanController extends Controller
 
         return back()->with('success', 'Data peminjaman berhasil dihapus.');
     }
+
+    public function data()
+    {
+        return response()->json(
+            Peminjaman::with('barang')->get()
+        );
+    }
 }

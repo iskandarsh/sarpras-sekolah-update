@@ -149,4 +149,11 @@ class BarangController extends Controller
 
         return back()->with('success', 'Data barang berhasil dihapus.');
     }
+
+    public function data()
+    {
+        $barang = Barang::with('ruangan')->get();
+
+        return response()->json($barang);
+    }
 }
