@@ -84,4 +84,11 @@ class RuanganController extends Controller
 
         return back()->with('success', 'Data berhasil dihapus');
     }
+
+    public function data()
+    {
+        return response()->json(
+            Ruangan::all()
+        );
+    }
 }

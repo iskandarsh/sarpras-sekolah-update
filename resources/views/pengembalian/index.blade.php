@@ -68,107 +68,18 @@
             <div class="bg-white rounded-xl shadow-lg">
                 <div class="overflow-x-auto">
 
-                    <table class="min-w-full">
+                    <div class="bg-white rounded-xl shadow-lg">
+                        <div class="overflow-x-auto">
 
-                        <thead class="bg-blue-600 text-white">
+                            <div id="pengembalianGrid"></div>
 
-                            <tr>
+                            <form id="deleteForm" method="POST" style="display:none;">
+                                @csrf
+                                @method('DELETE')
+                            </form>
 
-                                <th class="hidden md:table-cell px-3 md:px-6 py-3">
-                                    No
-                                </th>
-
-                                <th class="px-6 py-3 text-left">
-                                    Peminjam
-                                </th>
-
-                                <th class="px-6 py-3 text-left">
-                                    Barang
-                                </th>
-
-                                <th class="hidden md:table-cell px-3 md:px-6 py-3 text-center">
-                                    Tanggal Pengembalian
-                                </th>
-
-                                <th class="hidden md:table-cell px-3 md:px-6 py-3 text-left">
-                                    Keterangan
-                                </th>
-
-                                <th class="px-6 py-3 text-center">
-                                    Aksi
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            @foreach($pengembalian as $item)
-
-                            <tr class="border-b hover:bg-gray-50">
-
-                                <td class="hidden md:table-cell px-3 md:px-6 py-4">
-                                    {{ $loop->iteration }}
-                                </td>
-
-                                <td class="px-6 py-4">
-                                    {{ $item->peminjaman->nama_peminjam }}
-                                </td>
-
-                                <td class="px-6 py-4">
-                                    {{ $item->peminjaman->barang->nama_barang }}
-                                </td>
-
-                                <td class="hidden md:table-cell px-3 md:px-6 py-4 text-center">
-                                    {{ $item->tanggal_pengembalian }}
-                                </td>
-
-                                <td class="hidden md:table-cell px-3 md:px-6 py-4">
-                                    {{ $item->keterangan }}
-                                </td>
-
-                                <td class="px-6 py-4">
-
-                                    @if(Auth::user()->role == 'admin')
-
-                                    <div class="flex justify-center gap-2">
-
-                                        <button
-                                            onclick="openEditModal(
-        '{{ $item->id }}',
-        '{{ $item->nama_ruangan }}',
-        '{{ $item->lantai }}',
-        '{{ $item->keterangan }}'
-        )"
-                                            class="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded">
-                                            Edit
-                                        </button>
-
-                                        <form action="{{ route('pengembalian.destroy', $item->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-
-                                            <button
-                                                onclick="return confirm('Yakin ingin menghapus data ini?')"
-                                                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
-                                                Hapus
-                                            </button>
-                                        </form>
-
-                                    </div>
-
-                                    @endif
-
-                                </td>
-
-                            </tr>
-
-                            @endforeach
-
-                        </tbody>
-
-                    </table>
+                        </div>
+                    </div>
 
                 </div>
 
@@ -396,6 +307,150 @@
 
 
         <script>
+            $.get("/pengembalian/data", function(data) {
+
+                $("#pengembalianGrid").dxDataGrid({
+
+                    dataSource: data,
+
+                    keyExpr: "id",
+
+                    showBorders: true,
+                    showColumnLines: true,
+                    showRowLines: true,
+                    rowAlternationEnabled: true,
+                    columnAutoWidth: true,
+                    hoverStateEnabled: true,
+
+                    searchPanel: {
+                        visible: true,
+                        width: 250,
+                        placeholder: "Cari pengembalian..."
+                    },
+
+                    filterRow: {
+                        visible: true
+                    },
+
+                    headerFilter: {
+                        visible: true
+                    },
+
+                    sorting: {
+                        mode: "multiple"
+                    },
+
+                    paging: {
+                        pageSize: 10
+                    },
+
+                    pager: {
+                        showPageSizeSelector: true,
+                        allowedPageSizes: [5, 10, 20, 50],
+                        showInfo: true
+                    },
+
+                    export: {
+                        enabled: true,
+                        allowExportSelectedData: true,
+                        fileName: "Data Pengembalian"
+                    },
+
+                    columnChooser: {
+                        enabled: true
+                    },
+
+                    columns: [
+
+                        {
+                            caption: "No",
+                            width: 60,
+                            alignment: "center",
+                            cellTemplate: function(container, options) {
+                                container.text(options.rowIndex + 1);
+                            }
+                        },
+
+                        {
+                            dataField: "peminjaman.barang.nama_barang",
+                            caption: "Barang"
+                        },
+
+                        {
+                            dataField: "peminjaman.nama_peminjam",
+                            caption: "Peminjam"
+                        },
+
+                        {
+                            dataField: "tanggal_pengembalian",
+                            caption: "Tanggal Pengembalian"
+                        },
+
+                        {
+                            dataField: "keterangan",
+                            caption: "Keterangan"
+                        },
+
+                        {
+                            caption: "Aksi",
+                            width: 220,
+                            alignment: "center",
+                            cellTemplate: function(container, options) {
+
+                                $("<button>")
+                                    .text("Edit")
+                                    .css({
+                                        background: "#facc15",
+                                        color: "white",
+                                        border: "none",
+                                        padding: "6px 12px",
+                                        borderRadius: "6px",
+                                        cursor: "pointer",
+                                        marginRight: "8px"
+                                    })
+                                    .on("click", function() {
+
+                                        openEditModal(
+                                            options.data.id,
+                                            options.data.tanggal_pengembalian,
+                                            options.data.keterangan
+                                        );
+
+                                    })
+                                    .appendTo(container);
+
+                                $("<button>")
+                                    .text("Hapus")
+                                    .css({
+                                        background: "#dc2626",
+                                        color: "white",
+                                        border: "none",
+                                        padding: "6px 12px",
+                                        borderRadius: "6px",
+                                        cursor: "pointer"
+                                    })
+                                    .on("click", function() {
+
+                                        if (confirm("Yakin ingin menghapus data ini?")) {
+
+                                            $("#deleteForm")
+                                                .attr("action", "/pengembalian/" + options.data.id)
+                                                .submit();
+
+                                        }
+
+                                    })
+                                    .appendTo(container);
+
+                            }
+                        }
+
+                    ]
+
+                });
+
+            });
+
             $(document).ready(function() {
                 $('.select2').select2({
                     width: '100%'
@@ -412,8 +467,6 @@
 
             }
 
-
-
             function closeTambahModal() {
 
                 document.getElementById('tambahModal')
@@ -424,48 +477,32 @@
 
             }
 
-
-
-
             function openEditModal(id, tanggal, keterangan) {
-
 
                 document.getElementById('editModal')
                     .classList.remove('hidden');
 
-
                 document.getElementById('editModal')
                     .classList.add('flex');
-
-
 
                 document.getElementById('editForm').action =
                     '/pengembalian/' + id;
 
-
-
                 document.getElementById('edit_tanggal_pengembalian').value =
                     tanggal;
-
-
 
                 document.getElementById('edit_keterangan').value =
                     keterangan ?? '';
 
             }
 
-
-
             function closeEditModal() {
-
 
                 document.getElementById('editModal')
                     .classList.add('hidden');
 
-
                 document.getElementById('editModal')
                     .classList.remove('flex');
-
 
             }
         </script>

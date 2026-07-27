@@ -26,6 +26,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/activity-log', [ActivityLogController::class, 'index'])
         ->name('activity-log.index');
 
+    Route::get('/ruangan/data', [RuanganController::class, 'data']);
+
     Route::resource('ruangan', RuanganController::class);
 
     Route::get('/barang/data', [BarangController::class, 'data'])
@@ -37,6 +39,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('peminjaman.data');
 
     Route::resource('peminjaman', PeminjamanController::class);
+
+    Route::get('/pengembalian/data', [PengembalianController::class, 'data']);
 
     Route::resource('pengembalian', PengembalianController::class);
 

@@ -120,4 +120,11 @@ class PengembalianController extends Controller
 
         return back()->with('success', 'Data pengembalian berhasil dihapus.');
     }
+
+    public function data()
+    {
+        return response()->json(
+            Pengembalian::with('peminjaman.barang')->get()
+        );
+    }
 }
