@@ -8,8 +8,20 @@
             @if(Auth::user()->role == 'admin')
             <button
                 onclick="openTambahModal()"
-                class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow">
-                + Tambah Ruangan
+                class="
+        bg-gradient-to-r from-violet-600 to-purple-600
+        hover:from-violet-700 hover:to-purple-700
+        text-white
+        px-6 py-3
+        rounded-xl
+        shadow-lg
+        hover:shadow-purple-500/40
+        transition-all
+        duration-300
+        hover:-translate-y-1">
+
+                ➕ Tambah Ruangan
+
             </button>
             @endif
         </div>
@@ -25,55 +37,19 @@
             </div>
             @endif
 
-            <form method="GET" action="{{ route('ruangan.index') }}" class="mb-5">
+            <div class="bg-white rounded-2xl shadow-xl p-4">
 
-                <div class="flex flex-col md:flex-row gap-3">
+                <div id="ruanganGrid"></div>
 
-                    <input
-                        type="text"
-                        name="search"
-                        value="{{ request('search') }}"
-                        placeholder="Cari nama ruangan atau lantai..."
-                        class="flex-1 border rounded-lg px-4 py-2">
+                <form id="deleteForm" method="POST" style="display:none;">
+                    @csrf
+                    @method('DELETE')
+                </form>
 
-                    <div class="flex gap-2">
-
-                        <button
-                            type="submit"
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg">
-
-                            Cari
-
-                        </button>
-
-                        <a
-                            href="{{ route('ruangan.index') }}"
-                            class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg">
-
-                            Reset
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </form>
-
-            <div class="bg-white rounded-xl shadow-lg">
-                <div class="overflow-x-auto">
-
-                    <div id="ruanganGrid"></div>
-
-                    <form id="deleteForm" method="POST" style="display:none;">
-                        @csrf
-                        @method('DELETE')
-                    </form>
-
-                </div>
             </div>
-
         </div>
+
+    </div>
 
     </div>
 
@@ -139,7 +115,16 @@
                     <button
                         type="button"
                         onclick="closeTambahModal()"
-                        class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg">
+                        class="
+bg-gradient-to-r from-gray-500 to-slate-700
+hover:from-gray-600 hover:to-slate-800
+text-white
+px-5 py-2
+rounded-xl
+shadow-lg
+transition-all
+duration-300
+hover:-translate-y-1">
 
                         Batal
 
@@ -147,7 +132,17 @@
 
                     <button
                         type="submit"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg">
+                        class="
+bg-gradient-to-r from-emerald-500 to-green-600
+hover:from-emerald-600 hover:to-green-700
+text-white
+px-5 py-2
+rounded-xl
+shadow-lg
+hover:shadow-green-400/40
+transition-all
+duration-300
+hover:-translate-y-1">
 
                         Simpan
 
@@ -176,7 +171,7 @@
                     </button>
                 </div>
 
-                <form id="formEdit" method="POST">
+                <form id="editForm" method="POST">
 
                     @csrf
                     @method('PUT')
@@ -224,7 +219,16 @@
                         <button
                             type="button"
                             onclick="closeEditModal()"
-                            class="bg-gray-500 text-white px-5 py-2 rounded-lg">
+                            class="
+bg-gradient-to-r from-gray-500 to-slate-700
+hover:from-gray-600 hover:to-slate-800
+text-white
+px-5 py-2
+rounded-xl
+shadow-lg
+transition-all
+duration-300
+hover:-translate-y-1">
 
                             Batal
 
@@ -232,7 +236,17 @@
 
                         <button
                             type="submit"
-                            class="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg">
+                            class="
+bg-gradient-to-r from-blue-600 to-sky-500
+hover:from-blue-700 hover:to-sky-600
+text-white
+px-5 py-2
+rounded-xl
+shadow-lg
+hover:shadow-blue-400/40
+transition-all
+duration-300
+hover:-translate-y-1">
 
                             Update
 
@@ -256,16 +270,19 @@
                     keyExpr: "id",
 
                     showBorders: true,
-                    showColumnLines: true,
+                    showColumnLines: false,
                     showRowLines: true,
                     rowAlternationEnabled: true,
-                    columnAutoWidth: true,
                     hoverStateEnabled: true,
+                    columnAutoWidth: true,
+                    columnHidingEnabled: true,
+                    allowColumnResizing: true,
+                    columnResizingMode: "widget",
 
                     searchPanel: {
                         visible: true,
                         width: 250,
-                        placeholder: "Cari ruangan..."
+                        placeholder: "Cari data ruangan..."
                     },
 
                     filterRow: {
@@ -334,25 +351,89 @@
                         // taruh Aksi di sini paling bawah
                         {
                             caption: "Aksi",
-                            width: 150,
-                            alignment: "center",
+                            width: 180,
+                            allowExporting: false,
 
                             cellTemplate: function(container, options) {
 
-                                let data = options.data;
-
+                                // Tombol Edit
                                 $("<button>")
-                                    .addClass("px-3 py-1 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500")
-                                    .text("Edit")
-                                    .click(function() {
+                                    .html("<i class='fa-solid fa-pen'></i> Edit")
+                                    .css({
+                                        background: "linear-gradient(to right, #2563EB, #0EA5E9)",
+                                        color: "#fff",
+                                        border: "none",
+                                        padding: "10px 18px",
+                                        borderRadius: "12px",
+                                        fontWeight: "600",
+                                        cursor: "pointer",
+                                        marginRight: "8px",
+                                        boxShadow: "0 8px 20px rgba(37,99,235,.40)",
+                                        transition: "all .3s"
+                                    })
+                                    .hover(
+                                        function() {
+                                            $(this).css({
+                                                transform: "translateY(-3px)",
+                                                boxShadow: "0 12px 25px rgba(37,99,235,.55)"
+                                            });
+                                        },
+                                        function() {
+                                            $(this).css({
+                                                transform: "translateY(0)",
+                                                boxShadow: "0 8px 20px rgba(37,99,235,.40)"
+                                            });
+                                        }
+                                    )
+                                    .on("click", function() {
 
                                         openEditModal(
-                                            data.id,
-                                            data.nama_ruangan,
-                                            data.gedung,
-                                            data.lantai,
-                                            data.keterangan
+                                            options.data.id,
+                                            options.data.nama_ruangan,
+                                            options.data.lantai,
+                                            options.data.keterangan
                                         );
+
+                                    })
+                                    .appendTo(container);
+
+                                // Tombol Hapus
+                                $("<button>")
+                                    .html("🗑️ Hapus")
+                                    .css({
+                                        background: "linear-gradient(135deg,#EF4444,#DC2626)",
+                                        color: "#fff",
+                                        border: "none",
+                                        padding: "10px 18px",
+                                        borderRadius: "12px",
+                                        fontWeight: "600",
+                                        cursor: "pointer",
+                                        boxShadow: "0 8px 20px rgba(239,68,68,.40)",
+                                        transition: "all .3s"
+                                    })
+                                    .hover(
+                                        function() {
+                                            $(this).css({
+                                                transform: "translateY(-3px)",
+                                                boxShadow: "0 12px 25px rgba(239,68,68,.55)"
+                                            });
+                                        },
+                                        function() {
+                                            $(this).css({
+                                                transform: "translateY(0)",
+                                                boxShadow: "0 8px 20px rgba(239,68,68,.40)"
+                                            });
+                                        }
+                                    )
+                                    .on("click", function() {
+
+                                        if (confirm("Yakin ingin menghapus data ini?")) {
+
+                                            const form = document.getElementById("deleteForm");
+                                            form.action = "/ruangan/" + options.data.id;
+                                            form.submit();
+
+                                        }
 
                                     })
                                     .appendTo(container);
@@ -396,31 +477,22 @@
             }
 
 
-            function openEditModal(id, nama_ruangan, gedung, lantai, keterangan) {
+            function openEditModal(id, nama_ruangan, lantai, keterangan) {
 
+                document.getElementById('modalEdit').classList.remove('hidden');
+                document.getElementById('modalEdit').classList.add('flex');
 
-                document.getElementById('modalEdit')
-                    .classList.remove('hidden');
+                document.getElementById('editForm').action = "/ruangan/" + id;
 
-                document.getElementById('modalEdit')
-                    .classList.add('flex');
+                document.getElementById('edit_nama_ruangan').value = nama_ruangan;
+                document.getElementById('edit_lantai').value = lantai;
+                document.getElementById('edit_keterangan').value = keterangan ?? '';
+            }
 
+            function closeEditModal() {
 
-                document.getElementById('formEdit').action =
-                    '/ruangan/' + id;
-
-
-                document.getElementById('edit_nama_ruangan').value =
-                    nama_ruangan;
-
-                document.getElementById('edit_gedung').value =
-                    gedung;
-
-                document.getElementById('edit_lantai').value =
-                    lantai;
-
-                document.getElementById('edit_keterangan').value =
-                    keterangan ?? '';
+                document.getElementById('modalEdit').classList.add('hidden');
+                document.getElementById('modalEdit').classList.remove('flex');
 
             }
 
