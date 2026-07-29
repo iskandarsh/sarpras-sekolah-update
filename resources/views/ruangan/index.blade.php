@@ -399,7 +399,7 @@ hover:-translate-y-1">
 
                                 // Tombol Hapus
                                 $("<button>")
-                                    .html("🗑️ Hapus")
+                                    .html("<i class='fa-solid fa-trash'></i> Hapus")
                                     .css({
                                         background: "linear-gradient(135deg,#EF4444,#DC2626)",
                                         color: "#fff",
@@ -429,9 +429,9 @@ hover:-translate-y-1">
 
                                         if (confirm("Yakin ingin menghapus data ini?")) {
 
-                                            const form = document.getElementById("deleteForm");
-                                            form.action = "/ruangan/" + options.data.id;
-                                            form.submit();
+                                            $("#deleteForm")
+                                                .attr("action", "/pengembalian/" + options.data.id)
+                                                .submit();
 
                                         }
 
@@ -507,5 +507,18 @@ hover:-translate-y-1">
 
             }
         </script>
+
+        <style>
+            .dx-datagrid-headers {
+                font-weight: 700;
+                font-size: 14px;
+            }
+
+            .dx-datagrid-headers .dx-header-row>td {
+                font-weight: 700 !important;
+                color: #111827;
+                background-color: #f8fafc;
+            }
+        </style>
 
 </x-app-layout>

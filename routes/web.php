@@ -44,6 +44,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('pengembalian', PengembalianController::class);
 
+    Route::get('/user/data', [UserController::class, 'data'])
+        ->name('user.data');
+
     Route::resource('user', UserController::class);
 
     Route::get('/profile', [ProfileController::class, 'edit'])

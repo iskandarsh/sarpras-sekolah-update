@@ -10,9 +10,19 @@
 
             <button
                 onclick="openTambahModal()"
-                class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow">
+                class="
+        bg-gradient-to-r from-violet-600 to-purple-600
+        hover:from-violet-700 hover:to-purple-700
+        text-white
+        px-6 py-3
+        rounded-xl
+        shadow-lg
+        hover:shadow-purple-500/40
+        transition-all
+        duration-300
+        hover:-translate-y-1">
 
-                + Tambah User
+                ➕ Tambah User
 
             </button>
 
@@ -32,154 +42,15 @@
 
             @endif
 
-            <form method="GET" action="{{ route('user.index') }}" class="mb-5">
-
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-
-                    <input
-                        type="text"
-                        name="search"
-                        value="{{ request('search') }}"
-                        placeholder="Cari nama atau email..."
-                        class="border rounded-lg px-4 py-2">
-
-                    <select
-                        name="role"
-                        class="border rounded-lg px-4 py-2">
-
-                        <option value="">Semua Role</option>
-
-                        <option value="admin"
-                            {{ request('role') == 'admin' ? 'selected' : '' }}>
-                            Admin
-                        </option>
-
-                        <option value="user"
-                            {{ request('role') == 'user' ? 'selected' : '' }}>
-                            User
-                        </option>
-
-                    </select>
-
-                    <div class="flex gap-2">
-
-                        <button
-                            type="submit"
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg">
-
-                            Cari
-
-                        </button>
-
-                        <a
-                            href="{{ route('user.index') }}"
-                            class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg">
-
-                            Reset
-
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </form>
-
             <div class="bg-white rounded-xl shadow-lg">
                 <div class="overflow-x-auto">
 
-                    <table class="min-w-full">
+                    <div id="userGrid"></div>
 
-                        <thead class="bg-blue-600 text-white">
-
-                            <tr>
-
-                                <th class="hidden md:table-cell px-3 md:px-6 py-3">
-                                    No
-                                </th>
-
-                                <th class="px-6 py-3 text-left">
-                                    Nama
-                                </th>
-
-                                <th class="hidden md:table-cell px-3 md:px-6 py-3">
-                                    Email
-                                </th>
-
-                                <th class="px-6 py-3 text-center">
-                                    Role
-                                </th>
-
-                                <th class="px-6 py-3 text-center">
-                                    Aksi
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-                            @foreach($users as $user)
-
-                            <tr class="border-b hover:bg-gray-50">
-
-                                <td class="hidden md:table-cell px-3 md:px-6 py-4">
-                                    {{ $loop->iteration }}
-                                </td>
-
-                                <td class="px-6 py-4">
-                                    {{ $user->name }}
-                                </td>
-
-                                <td class="hidden md:table-cell px-3 md:px-6 py-4">
-                                    {{ $user->email }}
-                                </td>
-
-                                <td class="px-6 py-4 text-center">
-                                    {{ ucfirst($user->role) }}
-                                </td>
-
-                                <td class="px-6 py-4">
-
-                                    @if(Auth::user()->role == 'admin')
-
-                                    <div class="flex justify-center gap-2">
-
-                                        <button
-                                            onclick="openEditModal(
-    '{{ $user->id }}',
-    '{{ $user->name }}',
-    '{{ $user->email }}',
-    '{{ $user->role }}'
-)"
-                                            class="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded">
-                                            Edit
-                                        </button>
-
-                                        <form action="{{ route('user.destroy', $user->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-
-                                            <button
-                                                onclick="return confirm('Yakin ingin menghapus data ini?')"
-                                                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
-                                                Hapus
-                                            </button>
-                                        </form>
-
-                                    </div>
-
-                                    @endif
-
-                                </td>
-
-                            </tr>
-
-                            @endforeach
-
-                        </tbody>
-
-                    </table>
+                    <form id="deleteForm" method="POST" style="display:none;">
+                        @csrf
+                        @method('DELETE')
+                    </form>
 
                 </div>
 
@@ -196,17 +67,6 @@
                 <h2 class="text-xl font-bold mb-5">
                     Tambah User
                 </h2>
-
-                <form action="{{ route('user.destroy', $user->id) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-
-                    <button
-                        onclick="return confirm('Yakin ingin menghapus user ini?')"
-                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
-                        Hapus
-                    </button>
-                </form>
 
                 @csrf
 
@@ -410,74 +270,224 @@
         </div>
 
         <script>
-            $(document).ready(function() {
-                $('.select2').select2({
-                    width: '100%'
+            $.get("/user/data", function(data) {
+
+                $("#userGrid").dxDataGrid({
+
+                    dataSource: data,
+
+                    keyExpr: "id",
+
+                    showBorders: true,
+                    showColumnLines: false,
+                    showRowLines: true,
+                    rowAlternationEnabled: true,
+                    hoverStateEnabled: true,
+                    columnAutoWidth: true,
+                    columnHidingEnabled: true,
+                    allowColumnResizing: true,
+                    columnResizingMode: "widget",
+
+                    searchPanel: {
+                        visible: true,
+                        width: 250,
+                        placeholder: "Cari user..."
+                    },
+
+                    filterRow: {
+                        visible: true
+                    },
+
+                    headerFilter: {
+                        visible: true
+                    },
+
+                    sorting: {
+                        mode: "multiple"
+                    },
+
+                    paging: {
+                        pageSize: 10
+                    },
+
+                    pager: {
+                        showPageSizeSelector: true,
+                        allowedPageSizes: [5, 10, 20, 50],
+                        showInfo: true
+                    },
+
+                    export: {
+                        enabled: true,
+                        allowExportSelectedData: true,
+                        fileName: "Data User"
+                    },
+
+                    columnChooser: {
+                        enabled: true
+                    },
+
+                    columns: [
+
+                        {
+                            caption: "No",
+                            width: 60,
+                            alignment: "center",
+                            cellTemplate: function(container, options) {
+                                container.text(options.rowIndex + 1);
+                            }
+                        },
+
+                        {
+                            dataField: "name",
+                            caption: "Nama",
+                            minWidth: 180
+                        },
+
+                        {
+                            dataField: "email",
+                            caption: "Email",
+                            minWidth: 250
+                        },
+
+                        {
+                            dataField: "role",
+                            caption: "Role",
+                            width: 130,
+                            alignment: "center",
+
+                            cellTemplate: function(container, options) {
+
+                                let background = "";
+                                let shadow = "";
+
+                                if (options.value == "admin") {
+
+                                    background = "linear-gradient(135deg,#2563EB,#3B82F6)";
+                                    shadow = "0 6px 15px rgba(37,99,235,.35)";
+
+                                } else {
+
+                                    background = "linear-gradient(135deg,#16A34A,#22C55E)";
+                                    shadow = "0 6px 15px rgba(34,197,94,.35)";
+
+                                }
+
+                                $("<span>")
+                                    .text(options.value.charAt(0).toUpperCase() + options.value.slice(1))
+                                    .css({
+                                        background: background,
+                                        color: "#fff",
+                                        padding: "8px 16px",
+                                        borderRadius: "999px",
+                                        fontSize: "13px",
+                                        fontWeight: "700",
+                                        display: "inline-block",
+                                        boxShadow: shadow
+                                    })
+                                    .appendTo(container);
+
+                            }
+
+                        },
+
+                        {
+                            caption: "Aksi",
+                            width: 220,
+                            fixed: true,
+                            fixedPosition: "right",
+                            allowExporting: false,
+
+                            cellTemplate: function(container, options) {
+
+                                $("<button>")
+                                    .html("<i class='fa-solid fa-pen'></i> Edit")
+                                    .css({
+                                        background: "linear-gradient(135deg,#2563EB,#3B82F6)",
+                                        color: "#fff",
+                                        border: "none",
+                                        padding: "10px 18px",
+                                        borderRadius: "12px",
+                                        fontWeight: "600",
+                                        cursor: "pointer",
+                                        marginRight: "8px",
+                                        boxShadow: "0 8px 20px rgba(37,99,235,.40)",
+                                        transition: "all .3s"
+                                    })
+                                    .hover(
+                                        function() {
+                                            $(this).css({
+                                                transform: "translateY(-3px)",
+                                                boxShadow: "0 12px 25px rgba(37,99,235,.55)"
+                                            });
+                                        },
+                                        function() {
+                                            $(this).css({
+                                                transform: "translateY(0)",
+                                                boxShadow: "0 8px 20px rgba(37,99,235,.40)"
+                                            });
+                                        }
+                                    )
+                                    .on("click", function() {
+
+                                        openEditModal(
+                                            options.data.id,
+                                            options.data.name,
+                                            options.data.email,
+                                            options.data.role
+                                        );
+
+                                    })
+                                    .appendTo(container);
+
+                                $("<button>")
+                                    .html("<i class='fa-solid fa-trash'></i> Hapus")
+                                    .css({
+                                        background: "linear-gradient(135deg,#EF4444,#DC2626)",
+                                        color: "#fff",
+                                        border: "none",
+                                        padding: "10px 18px",
+                                        borderRadius: "12px",
+                                        fontWeight: "600",
+                                        cursor: "pointer",
+                                        boxShadow: "0 8px 20px rgba(239,68,68,.40)",
+                                        transition: "all .3s"
+                                    })
+                                    .hover(
+                                        function() {
+                                            $(this).css({
+                                                transform: "translateY(-3px)",
+                                                boxShadow: "0 12px 25px rgba(239,68,68,.55)"
+                                            });
+                                        },
+                                        function() {
+                                            $(this).css({
+                                                transform: "translateY(0)",
+                                                boxShadow: "0 8px 20px rgba(239,68,68,.40)"
+                                            });
+                                        }
+                                    )
+                                    .on("click", function() {
+
+                                        if (confirm("Yakin ingin menghapus data ini?")) {
+
+                                            const form = document.getElementById("deleteForm");
+                                            form.action = "/user/" + options.data.id;
+                                            form.submit();
+
+                                        }
+
+                                    })
+                                    .appendTo(container);
+
+                            }
+
+                        }
+
+                    ]
+
                 });
+
             });
-
-            function openTambahModal() {
-
-                document.getElementById('tambahModal')
-                    .classList.remove('hidden');
-
-                document.getElementById('tambahModal')
-                    .classList.add('flex');
-
-            }
-
-
-            function closeTambahModal() {
-
-                document.getElementById('tambahModal')
-                    .classList.add('hidden');
-
-                document.getElementById('tambahModal')
-                    .classList.remove('flex');
-
-            }
-
-
-
-            function openEditModal(id, name, email, role) {
-
-
-                document.getElementById('editModal')
-                    .classList.remove('hidden');
-
-                document.getElementById('editModal')
-                    .classList.add('flex');
-
-
-                document.getElementById('editForm').action =
-                    '/user/' + id;
-
-
-                document.getElementById('edit_name').value = name;
-
-                document.getElementById('edit_email').value = email;
-
-                document.getElementById('edit_password').value = '';
-
-                document.getElementById('edit_role').value = role;
-
-
-            }
-
-
-
-            function closeEditModal() {
-
-
-                document.getElementById('editModal')
-                    .classList.add('hidden');
-
-
-                document.getElementById('editModal')
-                    .classList.remove('flex');
-
-
-            }
         </script>
 
 </x-app-layout>

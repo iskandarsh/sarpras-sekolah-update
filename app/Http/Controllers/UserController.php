@@ -9,26 +9,14 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = User::query();
+        return view('user.index');
+    }
 
-        // Search
-        if ($request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                    ->orWhere('email', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        // Filter Role
-        if ($request->role) {
-            $query->where('role', $request->role);
-        }
-
-        $users = $query->latest()->get();
-
-        return view('user.index', compact('users'));
+    public function data()
+    {
+        return response()->json(User::latest()->get());
     }
 
     public function store(Request $request)
