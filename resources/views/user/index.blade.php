@@ -488,6 +488,46 @@
                 });
 
             });
+
+            $(document).ready(function() {
+                $('.select2').select2({
+                    width: '100%'
+                });
+            });
+
+            function openTambahModal() {
+
+                document.getElementById("tambahModal").classList.remove("hidden");
+                document.getElementById("tambahModal").classList.add("flex");
+
+            }
+
+            function closeTambahModal() {
+
+                document.getElementById("tambahModal").classList.add("hidden");
+                document.getElementById("tambahModal").classList.remove("flex");
+
+            }
+
+            function openEditModal(id, name, email, role) {
+
+                document.getElementById("editModal").classList.remove("hidden");
+                document.getElementById("editModal").classList.add("flex");
+
+                document.getElementById("editForm").action = "/user/" + id;
+
+                document.getElementById("edit_name").value = name;
+                document.getElementById("edit_email").value = email;
+                document.getElementById("edit_role").value = role;
+
+            }
+
+            function closeEditModal() {
+
+                document.getElementById("editModal").classList.add("hidden");
+                document.getElementById("editModal").classList.remove("flex");
+
+            }
         </script>
 
 </x-app-layout>

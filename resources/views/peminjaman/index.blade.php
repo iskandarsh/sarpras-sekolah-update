@@ -339,16 +339,16 @@
 
                     <button
                         type="button"
-                        onclick="closeTambahModal()"
+                        onclick="closeEditModal()"
                         class="
-    bg-gradient-to-r from-gray-500 to-slate-700
-    hover:from-gray-600 hover:to-slate-800
-    text-white
-    px-5 py-2
-    rounded-xl
-    shadow-lg
-    transition-all duration-300
-    hover:-translate-y-1">
+        bg-gradient-to-r from-gray-500 to-slate-700
+        hover:from-gray-600 hover:to-slate-800
+        text-white
+        px-5 py-2
+        rounded-xl
+        shadow-lg
+        transition-all duration-300
+        hover:-translate-y-1">
 
                         Batal
 

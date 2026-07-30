@@ -5,20 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Barang;
 use App\Models\Ruangan;
 use App\Models\Peminjaman;
+use App\Models\Pengembalian;
 
 class DashboardController extends Controller
 {
     public function index()
     {
         $totalRuangan = Ruangan::count();
-
         $totalBarang = Barang::count();
-
         $barangBaik = Barang::where('kondisi', 'Baik')->count();
-
         $rusakRingan = Barang::where('kondisi', 'Rusak Ringan')->count();
-
         $rusakBerat = Barang::where('kondisi', 'Rusak Berat')->count();
+        $sedangDipinjam = Peminjaman::where('status', 'Dipinjam')->count();
+
+        $totalPengembalian = Pengembalian::count();
 
 
         // Barang yang sedang dipinjam
@@ -40,15 +40,16 @@ class DashboardController extends Controller
         ];
 
 
-        return view('dashboard', compact(
-            'totalRuangan',
-            'totalBarang',
-            'barangBaik',
-            'rusakRingan',
-            'rusakBerat',
-            'totalDipinjam',
-            'peminjamanTerbaru',
-            'grafikKondisi'
-        ));
+        return view('dashboard', [
+            'totalRuangan' => $totalRuangan,
+            'totalBarang' => $totalBarang,
+            'barangBaik' => $barangBaik,
+            'rusakRingan' => $rusakRingan,
+            'rusakBerat' => $rusakBerat,
+            'sedangDipinjam' => $sedangDipinjam,
+            'totalPengembalian' => $totalPengembalian,
+            'peminjamanTerbaru' => $peminjamanTerbaru,
+            'grafikKondisi' => $grafikKondisi,
+        ]);
     }
 }
