@@ -9,24 +9,11 @@ use Illuminate\Http\Request;
 
 class PeminjamanController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = Peminjaman::with('barang');
-
-        // Search nama peminjam
-        if ($request->search) {
-            $query->where('nama_peminjam', 'like', '%' . $request->search . '%');
-        }
-
-        // Filter status
-        if ($request->status) {
-            $query->where('status', $request->status);
-        }
-
-        $peminjaman = $query->latest()->get();
         $barang = Barang::all();
 
-        return view('peminjaman.index', compact('peminjaman', 'barang'));
+        return view('peminjaman.index', compact('barang'));
     }
     public function store(Request $request)
     {
@@ -114,5 +101,12 @@ class PeminjamanController extends Controller
         $peminjaman->delete();
 
         return back()->with('success', 'Data peminjaman berhasil dihapus.');
+    }
+
+    public function data()
+    {
+        return response()->json(
+            Peminjaman::with('barang')->get()
+        );
     }
 }
